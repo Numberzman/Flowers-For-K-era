@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Flowers for You 🌸</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    background: linear-gradient(to top, #f7dce5, #fffafc);
+    font-family: Georgia, serif;
+}
+
+#garden {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    left: -10%;
+    top: -10%;
+}
+
+.flower {
+    position: absolute;
+    transition: transform 0.15s ease-out;
+    opacity: 0;
+    animation: bloom 1.2s forwards ease-out;
+}
+
+.flower img {
+    width: 40px;
+    height: auto;
+    pointer-events: none;
+}
+
+@keyframes bloom {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.message {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 45%;
+    transform: translateY(-50%);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #8a4b6a;
+    opacity: 0;
+    animation: fadeIn 2.5s forwards;
+    animation-delay: 2.5s;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="garden"></div>
+
+<div class="message">
+    You're So Pretty,<br>
+    Here's A Fake Field Of Flowers Just For You 🙃
+</div>
+
+<script>
+const garden = document.getElementById("garden");
+
+const flowers = [
+    "https://i.imgur.com/8QfQG3D.png",
+    "https://i.imgur.com/5bXQZ2v.png",
+    "https://i.imgur.com/3QZbY7m.png",
+    "https://i.imgur.com/7cP3k9a.png"
+];
+
+let flowerElements = [];
+
+let count = 0;
+
+function spawnFlower() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "flower";
+
+    const img = document.createElement("img");
+
+    const randomFlower = flowers[Math.floor(Math.random() * flowers.length)];
+    img.src = randomFlower;
+
+    const size = 25 + Math.random() * 40;
+    img.style.width = size + "px";
+
+    wrapper.appendChild(img);
+
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+
+    wrapper.style.left = x + "px";
+    wrapper.style.top = y + "px";
+
+    garden.appendChild(wrapper);
+
+    flowerElements.push({
+        el: wrapper,
+        x,
+        y
+    });
+
+    count++;
+}
+
+// create field
+for (let i = 0; i < 80; i++) {
+    spawnFlower();
+}
+
+let tiltX = 0;
+let tiltY = 0;
+
+// phone tilt controls
+window.addEventListener("deviceorientation", (e) => {
+    tiltX = e.gamma / 25; // left/right
+    tiltY = e.beta / 25;  // up/down
+});
+
+// animate movement
+function animate() {
+    flowerElements.forEach(f => {
+        const offsetX = tiltX * 30;
+        const offsetY = tiltY * 30;
+
+        f.el.style.transform =
+            `translate(${offsetX}px, ${offsetY}px) scale(1)`;
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
